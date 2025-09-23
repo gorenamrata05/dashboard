@@ -1,0 +1,50 @@
+<div class="modal-backdrop" *ngIf="isOpen">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ task ? 'Edit Task' : 'Add Task' }}</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="onClose()"></button>
+      </div>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input id="title" type="text" formControlName="title" class="form-control" />
+            <div *ngIf="form.controls['title'].touched && form.controls['title'].invalid" class="text-danger small">
+              Title is required and max 20 characters.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" formControlName="description" rows="3" class="form-control"></textarea>
+            <div *ngIf="form.controls['description'].touched && form.controls['description'].invalid" class="text-danger small">
+              Description is required and max 100 characters.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select id="status" formControlName="status" class="form-select">
+              <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+            </select>
+            <div *ngIf="form.controls['status'].touched && form.controls['status'].invalid" class="text-danger small">
+              Status is required.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="dueDate" class="form-label">Due Date</label>
+            <input id="dueDate" type="date" formControlName="dueDate" class="form-control" />
+            <div *ngIf="form.controls['dueDate'].touched && form.controls['dueDate'].invalid" class="text-danger small">
+              Due Date is required.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="onClose()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
+            {{ task ? 'Update' : 'Add' }} Task
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

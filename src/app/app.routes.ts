@@ -1,15 +1,16 @@
-import { Routes } from '@angular/router';
-import { FileTreeComponent } from './file-tree/file-tree.component';
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { TaskListComponent } from '../app/file-tree/components/task-list/task-list.component';
 
-export const routes: Routes = [
-    {
-        path: '', 
-        component: FileTreeComponent
-    },{
-        path: 'fileTree', 
-        component: FileTreeComponent
-    },{
-        path: '**', 
-        component: FileTreeComponent
-    }
+const routes: Routes = [
+  { path: '', redirectTo: '/tasks', pathMatch: 'full' },
+  { path: 'tasks', component: TaskListComponent },
+  // future routes can go here
+  { path: '**', redirectTo: '/tasks' } // wildcard route
 ];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule {}

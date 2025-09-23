@@ -1,0 +1,124 @@
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h2>Task Manager Dashboard</h2>
+    <button class="btn btn-primary" (click)="openAddModal()">
+      <i class="fas fa-plus"></i> Add Task
+    </button>
+  </div>
+
+  <div class="filters row mb-3 g-2">
+    <div class="col-md-4">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by title or description"
+        [formControl]="searchControl"
+      />
+    </div>
+    <div class="col-md-3">
+      <select
+        class="form-select"
+        [(ngModel)]="statusFilter"
+        (change)="onStatusFilterChange(statusFilter)"
+      >
+        <option value="All">All Statuses</option>
+        <option
+          *ngFor="let status of ['To Do', 'In Progress', 'Complete']"
+          [value]="status"
+        >
+          {{ status }}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-5 d-flex align-items-center gap-3">
+      <span>Sort By:</span>
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        [class.active]="sortField === 'createdDate'"
+        (click)="onSortFieldChange('createdDate')"
+      >
+        Created Date
+        <i
+          [class]="
+            sortField === 'createdDate'
+              ? sortOrder === 'asc'
+                ? 'fas fa-arrow-up'
+                : 'fas fa-arrow-down'
+              : ''
+          "
+        ></i>
+      </button>
+      <button
+        class="btn btn-outline-secondary btn-sm"
+        [class.active]="sortField === 'title'"
+        (click)="onSortFieldChange('title')"
+      >
+        Title
+        <i
+          [class]="
+            sortField === 'title'
+              ? sortOrder === 'asc'
+                ? 'fas fa-arrow-up'
+                : 'fas fa-arrow-down'
+              : ''
+          "
+        ></i>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="filteredTasks.length === 0" class="text-center mt-5 text-muted">
+    No tasks found.
+  </div>
+
+  <div class="list-group">
+    <div
+      *ngFor="let task of filteredTasks"
+      class="list-group-item list-group-item-action d-flex flex-column flex-md-row justify-content-between align-items-md-center"
+    >
+      <div class="d-flex align-items-center gap-3 mb-2 mb-md-0">
+        <i
+          class="fas"
+          [ngClass]="getStatusIcon(task.status)"
+          [style.color]="getStatusColor(task.status)"
+          style="font-size: 1.5rem;"
+          title="{{ task.status }}"
+        ></i>
+        <div>
+          <h5 class="mb-1">{{ task.title }}</h5>
+          <p class="mb-0 text-truncate" style="max-width: 300px;">
+            {{ task.description }}
+          </p>
+        </div>
+      </div>
+      <div class="d-flex flex-column flex-md-row gap-3 text-muted small">
+        <div>
+          <strong>Created:</strong>
+          {{ task.createdDate | date: 'mediumDate' }}
+        </div>
+        <div>
+          <strong>Due:</strong>
+          {{ task.dueDate | date: 'mediumDate' }}
+        </div>
+        <button
+          class="btn btn-outline-primary btn-sm"
+          (click)="openEditModal(task)"
+          title="Edit Task"
+        >
+          <i class="fas fa-edit"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Task form modal -->
+<app-task-form
+  [isOpen]="isModalOpen"
+  [task]="selectedTask"
+  (close)="onModalClose()"
+  (save)="onSaveTask($event)"
+></app-task-form>
+
+<!-- Toast notifications -->
+<!-- <app-toast></app-toast> -->

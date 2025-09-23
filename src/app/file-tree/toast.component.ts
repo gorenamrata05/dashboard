@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastService, ToastMessage } from '../../services/toast.service';
+import { ToastService, ToastMessage } from './toast.service';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-toast',
   template: `
-  <div *ngIf="toast" class="toast-message" [ngClass]="toast.type">
-    {{ toast.text }}
+  <div *ngIf="toast" class="toast-message">
+    {{ toast?.text }}
   </div>
   `,
   styleUrls: ['./toast.component.scss']
