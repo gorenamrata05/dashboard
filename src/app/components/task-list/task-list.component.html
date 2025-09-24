@@ -1,28 +1,34 @@
-<div class="mx-auto px-[210px] py-[20px] text-4xl w-100 items-center">
-    <a href="/fileTree"
-      routerLink="/fileTree" 
-      class="text-blue-600 hover:text-blue-800 font-medium px-3 py-1 rounded hover:bg-blue-100"
-    >
-      File Tree
-    </a>
-    <a href="#"
-    routerLink= '/tasks' 
-      class="text-blue-600 hover:text-blue-800 font-medium px-3 py-1 rounded hover:bg-blue-100"
-    >
-      Dashboard
-    </a>
-  </div>
-  <div class="container mx-auto mb-10 relative z-10 shadow !p-8 bg-blue-50   
-">
+<div class="container mx-auto my-4">
+
+  <!-- Top navigation -->
   <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
-    <h1 class="text-4xl font-bold p-10">Task Manager Dashboard</h1>
-    <button
+    
+    <!-- Dashboard title -->
+    <h2 class="text-2xl font-bold">Task Manager Dashboard</h2>
+    <div class="flex gap-4 items-center">
+      <a 
+        routerLink="/fileTree" 
+        class="text-blue-600 hover:text-blue-800 font-medium px-3 py-1 rounded hover:bg-blue-100"
+      >
+        File Tree
+      </a>
+      <a 
+        routerLink="/tasks" 
+        class="text-blue-600 hover:text-blue-800 font-medium px-3 py-1 rounded hover:bg-blue-100"
+      >
+        Dashboard
+      </a>
+    </div>
+
+    <button 
       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center gap-2"
       (click)="onAddNewTask()"
     >
       <i class="fas fa-plus"></i> Add Task
     </button>
+
   </div>
+
   <div class="flex flex-wrap gap-3 mb-4">
     <input
       type="text"
@@ -30,6 +36,18 @@
       placeholder="Search by title or description"
       [formControl]="searchControl"
     />
+
+    <select
+      class="border border-gray-300 rounded px-3 py-2"
+      [(ngModel)]="statusFilter"
+      (change)="onStatusFilterChange(statusFilter)"
+    >
+      <option value="All">All Statuses</option>
+      <option *ngFor="let status of ['To Do', 'In Progress', 'Complete']" [value]="status">
+        {{ status }}
+      </option>
+    </select>
+
     <div class="flex items-center gap-2 flex-wrap">
       <span class="font-medium">Sort By:</span>
       <button
@@ -66,23 +84,11 @@
       </button>
     </div>
   </div>
-<div class="flex items-center gap-3 mb-4">
-  <label for="statusFilter" class="font-medium">Filter by Status:</label>
-  <select
-    id="statusFilter"
-    class="border border-gray-300 rounded px-3 py-2"
-    [(ngModel)]="statusFilter"
-    (change)="onStatusFilterChange(statusFilter)"
-  >
-    <option value="All">All</option>
-    <option value="To Do">To Do</option>
-    <option value="In Progress">In Progress</option>
-    <option value="Complete">Complete</option>
-  </select>
-</div>
-  <div *ngIf="filteredTasks.length === 0" class="text-center mt-10 text-gray-500">
+
+  <div *ngIf="filteredTasks.length === 0" class="text-center mt-5 text-gray-500">
     No tasks found.
   </div>
+
   <div class="space-y-3">
     <div
       *ngFor="let task of filteredTasks"
@@ -96,31 +102,17 @@
           style="font-size: 1.5rem;"
           title="{{ task.status }}"
         ></i>
-        <div class="w-70 m-auto">
+        <div>
           <h5 class="font-semibold">{{ task.title }}</h5>
           <p class="text-gray-600 truncate max-w-xs">{{ task.description }}</p>
         </div>
       </div>
       <div class="flex flex-col md:flex-row gap-3 text-gray-500 text-sm items-start md:items-center">
-        <div>
-          <strong>Created:</strong> {{ task.createdDate | date: 'mediumDate' }}
-        </div>
-        <div>
-          <span
-    class="px-3 py-1 rounded-full text-sm font-semibold"
-    [ngClass]="getStatusLabelClass(task.status)"
-    title="{{ task.status }}"
-  >
-    {{ task.status }}
-  </span>
-        </div>
-        <div>
-          <strong>Due:</strong> {{ task.dueDate | date: 'mediumDate' }}
-        </div>
+        <div><strong>Created:</strong> {{ task.createdDate | date:'mediumDate' }}</div>
+        <div><strong>Due:</strong> {{ task.dueDate | date:'mediumDate' }}</div>
         <button
           class="border border-blue-500 text-blue-500 px-2 py-1 rounded hover:bg-blue-50"
           (click)="onEditTask(task)"
-          title="Edit Task"
         >
           Edit
         </button>
@@ -134,4 +126,3 @@
   (close)="onModalClose()"
   (save)="onSaveTask($event)"
 ></app-task-form>
-

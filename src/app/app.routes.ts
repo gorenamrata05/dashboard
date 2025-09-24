@@ -1,12 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TaskListComponent } from '../app/file-tree/components/task-list/task-list.component';
+import { FileTreeComponent } from './file-tree/file-tree.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/tasks', pathMatch: 'full' },
   { path: 'tasks', component: TaskListComponent },
-  // future routes can go here
-  { path: '**', redirectTo: '/tasks' } // wildcard route
+  { path: 'fileTree', component: FileTreeComponent},
+  { path: '**', redirectTo: '/tasks' } 
 ];
 
 @NgModule({

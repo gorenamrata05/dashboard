@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NgFor } from '@angular/common'; // <-- Import NgFor directly
+import { CommonModule, NgFor } from '@angular/common'; 
 
 interface InputPath {
   filename: string;
@@ -25,7 +25,8 @@ type TreeNode = DirectoryNode | FileNode;
   templateUrl: './file-tree.component.html',
   styleUrls: ['./file-tree.component.css'],
   imports: [
-    NgFor // <-- Add NgFor to the component's imports array
+    NgFor,
+    CommonModule
   ]
 })
 export class FileTreeComponent implements OnInit {
@@ -38,11 +39,10 @@ export class FileTreeComponent implements OnInit {
     { filename: "Region3", filepath: "fileR3.jpg" }
   ];
 
-  processedPath: TreeNode[] = [];
+  processedPath: Array<any> = []; 
 
   ngOnInit(): void {
     this.processedPath = this.buildTree(this.filePaths);
-    console.log("Processed Tree:", this.processedPath); // Logs tree in console
   }
 
   private buildTree(paths: InputPath[]): TreeNode[] {
@@ -56,7 +56,6 @@ export class FileTreeComponent implements OnInit {
         const part = parts[i];
         const isLeaf = i === parts.length - 1;
 
-        // Handle single-level paths as files (not folders)
         if (isLeaf && parts.length === 1) {
           currentLevel.push({
             name: part,
@@ -85,13 +84,11 @@ export class FileTreeComponent implements OnInit {
             existing = dirNode;
           }
         }
-
         if (!isLeaf && existing && existing.isDirectory) {
           currentLevel = existing.items;
         }
       }
     }
-
     return root;
   }
 

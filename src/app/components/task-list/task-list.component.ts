@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common'; 
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { FormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+import { FormControl } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-import { Task, TaskStatus } from '../../task.model';
 import { TaskFormComponent } from '../task-form/task-form.component';
-import { TaskService } from '../../task.service';
-import { ToastrService } from 'ngx-toastr';
+import { Task, TaskStatus } from '../../file-tree/task.model';
+import { TaskService } from '../../file-tree/task.service';
+import { ToastService } from '../../file-tree/toast.service';
 
 type SortField = 'createdDate' | 'title';
 type SortOrder = 'asc' | 'desc';
@@ -18,29 +18,23 @@ type SortOrder = 'asc' | 'desc';
   standalone: true,
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss'],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    TaskFormComponent,
-    FormsModule,
-    NgIf
-  ]
+  imports: [TaskFormComponent, CommonModule, RouterModule] 
 })
 export class TaskListComponent implements OnInit {
-  tasks: Task[] = [];
+  private tasksSubject = new BehaviorSubject<Task[]>([]);
+  tasks$ = this.tasksSubject.asObservable();
   filteredTasks: Task[] = [];
-  showToast = false;
-
   statusFilter: TaskStatus | 'All' = 'All';
   searchControl = new FormControl('');
   sortField: SortField = 'createdDate';
   sortOrder: SortOrder = 'asc';
-
   isModalOpen = false;
   selectedTask: Task = this.createEmptyTask();
+  private tasks: Task[] = [];
+
   constructor(
     private taskService: TaskService,
-    private toastrService: ToastrService
+    private toast: ToastService
   ) {}
 
   ngOnInit() {
@@ -48,6 +42,7 @@ export class TaskListComponent implements OnInit {
       this.tasks = tasks;
       this.applyFilters();
     });
+
     this.searchControl.valueChanges
       .pipe(debounceTime(300), distinctUntilChanged())
       .subscribe(() => this.applyFilters());
@@ -77,7 +72,6 @@ export class TaskListComponent implements OnInit {
       }
       return this.sortOrder === 'asc' ? comp : -comp;
     });
-
     this.filteredTasks = filtered;
   }
 
@@ -96,35 +90,28 @@ export class TaskListComponent implements OnInit {
     this.applyFilters();
   }
 
-  onAddNewTask() {
-    this.selectedTask = this.createEmptyTask();
-    this.isModalOpen = true;
-    this.showSuccess();
-    this.showToast = true;
-  }
+  // onAddNewTask() {
+  //   this.selectedTask = this.createEmptyTask();
+  //   this.isModalOpen = true;
+  // }
 
-  onEditTask(task: Task) {
-    this.selectedTask = { ...task }; 
-    this.isModalOpen = true;
-    this.showSuccess();
-    this.showToast = true;
-  }
+  // onEditTask(task: Task) {
+  //   this.selectedTask = { ...task };
+  //   this.isModalOpen = true;
+  // }
 
-  onSaveTask(task: Task) {
-    this.showSuccess();
-    this.showToast = true;
+  // onSaveTask(task: Task) {
+  //   if (task.id === 0) {
+  //     this.taskService.addTask(task);
+  //     this.toast.show('Task added!');
+  //   } else {
+  //     this.taskService.updateTask(task);
+  //     this.toast.show('Task updated!');
+  //   }
 
-   if (task.id === 0) {
-    this.taskService.addTask(task);
-    this.toastrService.success('Task added!', 'Success');  
-  } else {
-    this.taskService.updateTask(task);
-    this.toastrService.info('Task updated!', 'Updated');  
-  }
-
-  this.isModalOpen = false;
-  this.applyFilters();
-}
+  //   this.isModalOpen = false;
+  //   this.applyFilters();
+  // }
 
   onModalClose() {
     this.isModalOpen = false;
@@ -150,36 +137,22 @@ export class TaskListComponent implements OnInit {
     }
   }
 
-  getStatusColor(status: string): string {
-  switch (status) {
-    case 'To Do':
-      return '#6B7280'; 
-    case 'In Progress':
-      return '#F59E0B'; 
-    case 'Complete':
-      return '#10B981'; 
-    default:
-      return '#374151'; 
+   getTasks(): Observable<Task[]> {
+    return this.tasks$;
+  }
+
+  onAddNewTask(task: Task) {
+    task.id = this.tasks.length + 1;
+    task.createdDate = new Date();
+    this.tasks.push(task);
+    this.tasksSubject.next([...this.tasks]); // emit updated tasks
+  }
+
+  onEditTask(task: Task) {
+    const index = this.tasks.findIndex(t => t.id === task.id);
+    if (index > -1) {
+      this.tasks[index] = { ...task };
+      this.tasksSubject.next([...this.tasks]); // emit updated tasks
     }
-  }
-
-  getStatusLabelClass(status: string): string {
-    switch (status) {
-      case 'To Do': return 'bg-gray-200 text-gray-800';
-      case 'In Progress': return 'bg-yellow-200 text-yellow-800';
-      case 'Complete': return 'bg-green-200 text-green-800';
-      default: return 'bg-gray-100 text-gray-700';
-    }
-  }
-
-  public showSuccess(): void {
-  }
-
-  public showWarning(): void {
-    this.toastrService.warning('Message Warning!', 'Title Warning!');
-  }
-
-  public showError(): void {
-    this.toastrService.error('Message Error!', 'Title Error!');
   }
 }

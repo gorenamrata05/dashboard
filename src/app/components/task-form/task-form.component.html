@@ -1,5 +1,5 @@
 <div class="modal-backdrop" *ngIf="isOpen">
-  <div class="modal-dialog p-20">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">{{ task ? 'Edit Task' : 'Add Task' }}</h5>
@@ -8,22 +8,22 @@
       <form [formGroup]="form" (ngSubmit)="onSubmit()">
         <div class="modal-body">
           <div class="mb-3">
-            <label for="title" class="form-label">Title:</label>
-            <input id="title" type="text" formControlName="title" class="form-control ml-5" />
+            <label for="title" class="form-label">Title</label>
+            <input id="title" type="text" formControlName="title" class="form-control" />
             <div *ngIf="form.controls['title'].touched && form.controls['title'].invalid" class="text-danger small">
               Title is required and max 20 characters.
             </div>
           </div>
           <div class="mb-3">
-            <label for="description" class="form-label absolute translate-x-46p translate-y-1/2">Description</label>
-            <textarea id="description" formControlName="description" rows="3" class="form-control ml-5 translate-x-1/2 resize-none"></textarea>
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" formControlName="description" rows="3" class="form-control"></textarea>
             <div *ngIf="form.controls['description'].touched && form.controls['description'].invalid" class="text-danger small">
               Description is required and max 100 characters.
             </div>
           </div>
           <div class="mb-3">
             <label for="status" class="form-label">Status</label>
-            <select id="status" formControlName="status" class="form-select ml-5">
+            <select id="status" formControlName="status" class="form-select">
               <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
             </select>
             <div *ngIf="form.controls['status'].touched && form.controls['status'].invalid" class="text-danger small">
@@ -32,15 +32,15 @@
           </div>
           <div class="mb-3">
             <label for="dueDate" class="form-label">Due Date</label>
-            <input id="dueDate" type="date" formControlName="dueDate" class="form-control ml-5" />
+            <input id="dueDate" type="date" formControlName="dueDate" class="form-control" />
             <div *ngIf="form.controls['dueDate'].touched && form.controls['dueDate'].invalid" class="text-danger small">
               Due Date is required.
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary border border-blue-500 text-blue-500 p-2" (click)="onClose()">Cancel</button>
-          <button type="submit" class="btn btn-primary border border-blue-500 text-blue-500 p-2" [disabled]="form.invalid">
+          <button type="button" class="btn btn-secondary" (click)="onClose()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="form.invalid">
             {{ task ? 'Update' : 'Add' }} Task
           </button>
         </div>

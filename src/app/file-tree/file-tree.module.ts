@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FileTreeComponent } from './file-tree.component';
 import { BrowserModule } from '@angular/platform-browser';
 
-
-
 @NgModule({
   declarations: [FileTreeComponent],
   imports: [

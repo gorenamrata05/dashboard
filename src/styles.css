@@ -1,1 +1,43 @@
-/* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@config "./tailwind.config.js";
+    .toast-success {
+  background-color: #28a745 !important;  
+  color: white !important;
+  font-weight: 600;
+}
+.toast-success, .toast-info {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 200px;
+  margin-top: 10px;
+  margin-right: 8px;
+  padding: 5px;
+  border-radius: 5px;
+  z-index: 9999;
+}
+
+.toast-info {
+  background-color: #17a2b8 !important;  
+  color: white !important;
+  font-weight: 600;
+}
+
+.toast-warning {
+  background-color: #ffc107 !important;  
+  color: black !important;
+  font-weight: 600;
+}
+
+.toast-error {
+  background-color: #dc3545 !important; 
+  color: white !important;
+  font-weight: 600;
+}
+
+.toast .toast-close-button {
+  color: white !important;
+  opacity: 0.8;
+  font-size: 1.2rem;
+}

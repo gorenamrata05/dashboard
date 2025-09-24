@@ -1,8 +1,55 @@
-<div *ngFor="let path of filePaths">
-    <div>
-        FileName: {{ path?.filename}}
-    </div>
-    <div>
-        filePath: {{ path?.filepath}}
-    </div>
+<div class="mx-auto px-[210px] py-[20px] text-4xl w-100 items-center">
+    <a href="/fileTree"
+      routerLink="/fileTree" 
+      class="text-blue-600 hover:text-blue-800 font-medium px-3 py-1 rounded hover:bg-blue-100"
+    >
+      File Tree
+    </a>
+    <a href="#"
+    routerLink= '/tasks' 
+      class="text-blue-600 hover:text-blue-800 font-medium px-3 py-1 rounded hover:bg-blue-100"
+    >
+      Dashboard
+    </a>
 </div>
+    <div class="p-10 bg-blue-50 m-10 border-grey border-radius-[20px]">
+    <h1 class="text-5xl p-5 font-bold">File Path Updation</h1>
+    <div class="text-2xl p-3" *ngFor="let path of filePaths">
+        <div>
+            FileName: {{ path?.filename}}
+        </div>
+        <div>
+            filePath: {{ path?.filepath}}
+        </div>
+    </div>
+    <div class="mt-10 p-5">
+    <h1 class="text-5xl font-bold">Updated File Paths</h1>
+    <div *ngFor="let file of processedPath">
+    <div class="font-bold text-lg p-10">
+        {{ file.name }} (Directory: {{ file.isDirectory }})
+    </div>
+
+    <ng-container class="p-10" *ngTemplateOutlet="renderItems; context:{ items: file.items }"></ng-container>
+    </div>
+
+    <ng-template #renderItems let-items="items">
+    <ul class="ml-5 list-disc">
+        <li *ngFor="let item of items">
+        <span *ngIf="!item.isDirectory" class="p-10">
+            File: {{ item.name }} → Download URL: 
+            <a [href]="item.downloadUrl" target="_blank" class="text-blue-600 underline p-10">
+            {{ item.downloadUrl }}
+            </a> 
+            (Directory: {{ item.isDirectory }})
+        </span>
+        <span *ngIf="item.isDirectory" class="font-semibold">
+            Directory: {{ item.name }} (Directory: {{ item.isDirectory }})
+        </span>
+        <ng-container class="p-10" *ngIf="item.isDirectory && item.items?.length">
+            <ng-container *ngTemplateOutlet="renderItems; context:{ items: item.items }"></ng-container>
+        </ng-container>
+        </li>
+    </ul>
+    </ng-template>
+</div>
+

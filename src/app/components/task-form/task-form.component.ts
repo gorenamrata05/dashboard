@@ -1,17 +1,14 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms';
 
-import { Task, TaskStatus } from '../../task.model';
-import { ToastrService } from 'ngx-toastr';
-import { TaskService } from '../../task.service';
+import { Task, TaskStatus } from '../../../app/file-tree/task.model';
 
 @Component({
   selector: 'app-task-form',
   templateUrl: './task-form.component.html',
   styleUrls: ['./task-form.component.scss'], 
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule]
 })
 export class TaskFormComponent implements OnChanges {
   @Input() task?: Task | null;
@@ -20,13 +17,10 @@ export class TaskFormComponent implements OnChanges {
   @Output() save = new EventEmitter<Task>();
 
   statuses: TaskStatus[] = ['To Do', 'In Progress', 'Complete'];
-  tasks: Task[] = [];
-  statusFilter: TaskStatus | 'All' = 'All';
 
   form: FormGroup;
 
-  constructor(private _taskService: TaskService, private fb: FormBuilder, private toastrService: ToastrService
-) {
+  constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(20)]],
       description: ['', [Validators.required, Validators.maxLength(100)]],
@@ -77,48 +71,5 @@ export class TaskFormComponent implements OnChanges {
 
   onClose() {
     this.close.emit();
-  }
-
-  public showSuccess(): void {
-    this.toastrService.success('Message Success!', 'Title Success!');
-  }
-
-  public showInfo(): void {
-    this.toastrService.info('Message Info!', 'Title Info!');
-  }
-
-  public showWarning(): void {
-    this.toastrService.warning('Message Warning!', 'Title Warning!');
-  }
-
-  public showError(): void {
-    this.toastrService.error('Message Error!', 'Title Error!');
-  }
-
-  getStatusLabelClass(status: string): string {
-  switch (status) {
-    case 'To Do':
-      return 'bg-gray-200 text-gray-800';
-    case 'In Progress':
-      return 'bg-yellow-200 text-yellow-800';
-    case 'Complete':
-      return 'bg-green-200 text-green-800';
-    default:
-      return 'bg-gray-100 text-gray-700';
-  }
-}
-
- onStatusChange(task: Task) {
-  this.tasks = this.tasks.map(t => t.id === task.id ? task : t);
-  this._taskService.updateTask(task);
-  this.applyFilters();
-  this.toastrService.success(`Status updated to ${task.status}`, 'Updated');
-}
-
-  applyFilters() {
-    let filtered = [...this.tasks];
-    if (this.statusFilter !== 'All') {
-      filtered = filtered.filter(t => t.status === this.statusFilter);
-    }
   }
 }
